@@ -26,6 +26,7 @@ export const App: React.FC = () => {
     setVoice,
     sendTextMessage,
     aiProviderName,
+    selectAiProvider,
   } = useJarvisAssistant();
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -158,6 +159,7 @@ export const App: React.FC = () => {
         selectedVoiceId={session.selectedVoiceId}
         onSelectVoice={setVoice}
         aiProviderName={aiProviderName}
+        onSelectAiProvider={selectAiProvider}
         isMicSupported={isMicSupported}
         isTtsSupported={isTtsSupported}
       />

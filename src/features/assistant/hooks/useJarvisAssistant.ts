@@ -4,6 +4,8 @@ import { AssistantStateMachine } from '../services/AssistantStateMachine';
 import { SpeechRecognitionAdapter } from '../../voice/services/SpeechRecognitionAdapter';
 import { SpeechSynthesisAdapter } from '../../voice/services/SpeechSynthesisAdapter';
 import { MockAIProvider } from '../../ai/services/MockAIProvider';
+import { OpenAIProvider } from '../../ai/services/OpenAIProvider';
+import { GeminiProvider } from '../../ai/services/GeminiProvider';
 import { IVoiceInputService, IVoiceOutputService, SpeechVoiceOption } from '../../voice/types/voice';
 import { IAIProvider, AIMessage } from '../../ai/types/ai';
 import { soundFxService } from '../services/SoundFxService';
@@ -15,7 +17,7 @@ export function useJarvisAssistant() {
   
   const [voiceInputService] = useState<IVoiceInputService>(() => new SpeechRecognitionAdapter());
   const [voiceOutputService] = useState<IVoiceOutputService>(() => new SpeechSynthesisAdapter());
-  const [aiProvider, setAiProvider] = useState<IAIProvider>(() => new MockAIProvider());
+  const [aiProvider, setAiProvider] = useState<IAIProvider>(() => new GeminiProvider());
 
   const [session, setSession] = useState<SessionContext>({
     messages: [],
@@ -266,6 +268,16 @@ export function useJarvisAssistant() {
     [processUserQuery, voiceOutputService]
   );
 
+  const selectAiProvider = useCallback((providerType: 'gemini' | 'openai' | 'mock') => {
+    if (providerType === 'gemini') {
+      setAiProvider(new GeminiProvider());
+    } else if (providerType === 'openai') {
+      setAiProvider(new OpenAIProvider());
+    } else {
+      setAiProvider(new MockAIProvider());
+    }
+  }, []);
+
   return {
     assistantState,
     session,
@@ -285,6 +297,7 @@ export function useJarvisAssistant() {
     setVoice,
     sendTextMessage,
     aiProviderName: aiProvider.name,
+    selectAiProvider,
     setAiProvider,
   };
 }

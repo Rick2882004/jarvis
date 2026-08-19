@@ -11,6 +11,7 @@ interface SettingsModalProps {
   selectedVoiceId: string | null;
   onSelectVoice: (voiceId: string) => void;
   aiProviderName: string;
+  onSelectAiProvider?: (provider: 'gemini' | 'openai' | 'mock') => void;
   isMicSupported: boolean;
   isTtsSupported: boolean;
 }
@@ -22,9 +23,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   selectedVoiceId,
   onSelectVoice,
   aiProviderName,
+  onSelectAiProvider,
   isMicSupported,
   isTtsSupported,
 }) => {
+  const getProviderValue = () => {
+    if (aiProviderName.includes('Gemini')) return 'gemini';
+    if (aiProviderName.includes('OpenAI')) return 'openai';
+    return 'mock';
+  };
   return (
     <AnimatePresence>
       {isOpen && (
@@ -55,7 +62,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <h2 className="text-base font-semibold text-slate-100 font-display tracking-wide">
                     JARVIS SYSTEM DIAGNOSTICS
                   </h2>
-                  <p className="text-xs text-slate-400 font-mono">Phase 1 Architecture Status</p>
+                  <p className="text-xs text-slate-400 font-mono">Phase 2 Architecture Status</p>
                 </div>
               </div>
 
@@ -143,19 +150,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
 
               {/* AI Provider */}
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="flex items-center gap-3">
-                  <Cpu size={18} className="text-purple-400" />
-                  <div>
-                    <p className="font-medium text-slate-200 text-xs font-mono">AI PROVIDER ABSTRACTION</p>
-                    <p className="text-xs text-slate-400">
-                      Active: <span className="text-purple-300 font-semibold">{aiProviderName}</span>
-                    </p>
+              <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Cpu size={18} className="text-purple-400" />
+                    <div>
+                      <p className="font-medium text-slate-200 text-xs font-mono">AI PROVIDER ABSTRACTION</p>
+                      <p className="text-xs text-slate-400">
+                        Active: <span className="text-purple-300 font-semibold">{aiProviderName}</span>
+                      </p>
+                    </div>
                   </div>
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-purple-950/60 text-purple-300 border border-purple-500/30">
+                    SERVER API
+                  </span>
                 </div>
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-purple-950/60 text-purple-300 border border-purple-500/30">
-                  SECURE MOCK
-                </span>
+
+                {onSelectAiProvider && (
+                  <div className="pt-1">
+                    <label htmlFor="ai-provider-select" className="text-[11px] font-mono text-slate-400 block mb-1">
+                      SWITCH AI BACKEND:
+                    </label>
+                    <select
+                      id="ai-provider-select"
+                      value={getProviderValue()}
+                      onChange={(e) => onSelectAiProvider(e.target.value as 'gemini' | 'openai' | 'mock')}
+                      className="w-full bg-slate-950 text-xs text-slate-200 border border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-purple-500 font-mono"
+                    >
+                      <option value="gemini">Gemini 2.5 Flash — Free Tier (Default)</option>
+                      <option value="openai">OpenAI GPT-4o — API</option>
+                      <option value="mock">Jarvis Mock Core — Local</option>
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
 
