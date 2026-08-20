@@ -80,8 +80,10 @@ export class SpeechSynthesisAdapter implements IVoiceOutputService {
       return;
     }
 
-    // Cancel any current speech (interruption guarantee)
-    this.stop();
+    // Only cancel active/pending speech (interruption guarantee) without redundant IPC delay
+    if (this.isSpeaking()) {
+      this.stop();
+    }
 
     if (!text.trim()) return;
 
